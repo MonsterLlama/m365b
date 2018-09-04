@@ -1,0 +1,41 @@
+﻿//Script GUID:5bbb8275-cf94-4c59-a004-e2c986362035
+//Used for tracking history
+#DECLARE DataStartDate string = "2017-10-01";
+#DECLARE DataEndDate   string = "2017-11-06";
+
+#DECLARE SetupData_Path string = string.Format(@"/shares/AzureAnalytics.Dev/AzureAnalytics.Dev.PublishedData/Microsoft.Intune.IntunePE.SqlAggregator/AppService_AppEnforcementStatus/%Y/%m/%d/%h/Data_%Y_%m_%d_%h.ss?date=({0})...({1})&hour=00...23&sparsestreamset=true", @DataStartDate, @DataEndDate);
+stream_ss = SSTREAM @SetupData_Path;
+
+// This is the (currently) hard-coded list of AccountIds we care about
+//AccountIDs = EXTRACT
+//             AccountId : string
+//             FROM @"/my/AccountIDs.csv"
+//             USING DefaultTextExtractor(delimiter: ',');
+
+resultsTable = 
+
+    SELECT DISTINCT s.AccountId AS AccountId,
+                    s.ApplicationId AS ApplicationId,
+                    s.UserId AS UserId,
+                    s.DeviceId AS DeviceId,
+                    s.ApplicationVersion AS ApplicationVersion,
+                    s.LastError AS LastError,
+                    s.LastComplianceMessageTime AS LastComplianceMessageTime,
+                    s.LastEnforcementMessageTime AS LastEnforcementMessageTime,
+                    s.IsUserTargetingTombstoned AS IsUserTargetingTombstoned,
+                    s.IsDeviceTargetingTombstoned AS IsDeviceTargetingTombstoned,
+                    s.ResultantAppState AS ResultantAppState,
+                    s.PartitionId AS PartitionId,
+                    s.InternalVersion AS InternalVersion,
+                    s.ScaleUnitName AS ScaleUnitName
+    FROM stream_ss AS s
+    WHERE s.AccountId == "7ac49d74-3c0b-477a-a6b8-14c43f94e949"; // REED-HEIN
+    //JOIN AccountIDs AS a ON a.AccountId == s.AccountId;
+    
+
+
+#DECLARE output       string = String.Format(@"/my/Intune/Data.from.{0}.thru.{1}.csv", @DataStartDate, @DataEndDate);
+
+OUTPUT resultsTable
+TO     @output
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
