@@ -1,0 +1,9 @@
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\bin\Debug\ActiveDirectoryQuerying.exe.config
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\bin\Debug\ActiveDirectoryQuerying.exe
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\bin\Debug\ActiveDirectoryQuerying.pdb
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\obj\Debug\ActiveDirectoryQuerying.csprojResolveAssemblyReference.cache
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\obj\Debug\ActiveDirectoryQuerying.exe
+c:\users\v-hugmi\documents\visual studio 2015\Projects\ActiveDirectoryQuerying\ActiveDirectoryQuerying\obj\Debug\ActiveDirectoryQuerying.pdb
+\\mdfile3\OrcasTS\Files\Core\TeamData\o365\ActiveDirectoryQuerying\ActiveDirectoryQuerying\bin\Debug\ActiveDirectoryQuerying.exe.config
+\\mdfile3\OrcasTS\Files\Core\TeamData\o365\ActiveDirectoryQuerying\ActiveDirectoryQuerying\obj\Debug\ActiveDirectoryQuerying.exe
+\\mdfile3\OrcasTS\Files\Core\TeamData\o365\ActiveDirectoryQuerying\ActiveDirectoryQuerying\obj\Debug\ActiveDirectoryQuerying.pdb

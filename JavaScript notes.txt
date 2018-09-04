@@ -1,0 +1,30 @@
+
+
+JavaScript document object methods to find an element
+-----------------------------------------------------
+querySelector:
+ element = document.querySelector(selectors);
+
+    - element is an Element object.
+    - selectors is a string containing one or more CSS selectors separated by commas.
+
+Note: The querySelector() method only returns the first element that matches the specified selectors. 
+ To return all the matches, use the querySelectorAll() method instead.
+ If the selector matches an ID in document that is used several times 
+(Note that an "id" should be unique within a page and should not be used more than once), 
+it returns the first matching element.
+
+---------------------------------------------------------------------------------------------------------
+
+document.querySelectorAll:
+elementList = document.querySelectorAll(selectors);
+
+    - elementList is a non-live NodeList of element objects.
+    - selectors is a string containing one or more CSS selectors separated by commas.
+
+Note: Returns a non-live NodeList of all the matching element nodes.
+The returned NodeList will contain all the elements in the document that are matched by any of the specified selectors.
+The string argument passed to querySelectorAll must follow the CSS syntax.
+Throws a SYNTAX_ERR exception if the specified group of selectors is invalid.
+
+---------------------------------------------------------------------------------------------------------

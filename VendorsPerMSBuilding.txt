@@ -1,0 +1,641 @@
+
+-------------------------------------------------------------------------------
+Entries: 8118
+-------------------------------------------------------------------------------
+
+Buildings: 98
+-------------------------------------------------------------------------------
+Vendor per Building and Head Count in Redmond
+-------------------------------------------------------------------------------
+294		 STUDIO D
+261		 MILLENNIUM A
+229		 REDW-A
+224		 REDW-C
+214		 STUDIO H
+200		 SAMM-D
+192		 122
+192		 REDW-B
+189		 STUDIO A
+180		 REDW-D
+179		 83
+178		 26
+177		 121
+173		 STUDIO C
+158		 127
+156		 37
+156		 88
+154		 REDW-E
+147		 MILLENNIUM C
+141		 LINCOLN SQUARE
+139		 CITY CENTER
+136		 109
+135		 87
+130		 27
+126		 WILLOWS-10525
+121		 ADVANTA-B
+120		 40
+115		 9
+112		 STUDIO B
+109		 111
+108		 34
+106		 MILLENNIUM E
+98		 36
+96		 120
+94		 99
+92		 25
+91		 43
+89		 11
+83		 92
+80		 1
+78		 BRAVERN-2
+75		 41
+74		 35
+74		 MILLENNIUM D
+72		 10
+70		 17
+68		 86
+67		 SEA-320WESTLAKE
+64		 MILLENNIUM F
+59		 16
+59		 ADVANTA-A
+58		 8
+57		 3
+56		 84
+55		 ADVANTA-C
+55		 REDMOND WOODS-C
+54		 2
+53		 STUDIO G
+52		 112
+50		 126
+50		 BRAVERN-1
+49		 123
+43		 44
+41		 REDMOND-17760
+38		 50
+37		 6
+37		 85
+34		 124
+34		 MILLENNIUM B
+33		 115
+33		 18
+32		 21
+30		 22
+30		 33
+30		 TUKWILA-5
+29		 5
+29		 STUDIO E
+28		 REDMOND TOWN B6
+26		 STUDIO F
+25		 114
+23		 4
+22		 STUDIO X
+20		 30
+17		 28
+17		 WILLOWS WHSE
+16		 42
+16		 BELLEVUE-1814
+13		 19
+13		 WILLOWS-9911
+12		 MARYMOOR
+10		 REDMOND WOODS-A
+8		 24
+7		 125
+6		 113
+3		 WILLOWS-9825
+1		 20
+1		 31
+1		 32
+
+-------------------------------------------------------------------------------
+Companies: 528
+-------------------------------------------------------------------------------
+Company and Head Count in Redmond
+-------------------------------------------------------------------------------
+428		 Insight Global
+315		 Tata Consultancy Services
+294		 HCL America Inc
+291		 Mindtree LTD
+286		 Experis
+255		 TEKsystems
+199		 Aditi Staffing LLC
+170		 Aquent LLC
+165		 Pactera Technologies Inc
+128		 Wipro Ltd.
+114		 Beyondsoft Consulting Inc
+113		 Infosys Ltd
+111		 Allyis Inc
+97		 Collabera
+90		 Inspur Worldwide Services Ltd
+86		 H10 Capital
+81		 Populus Group LLC
+80		 Design Laboratory Inc
+79		 Lionbridge Technologies Inc
+75		 Simplicity Consulting Inc
+73		 Xtreme Consulting Group Inc
+68		 Launch Consulting
+68		 LMC Consulting Group
+66		 Accenture
+66		 Murphy & Associates
+63		 Robert Half International
+63		 Vega Consulting LLC
+62		 Apex Systems Inc
+61		 Atos IT Solutions and Services
+60		 Rational Interaction
+59		 Tech Mahindra Ltd
+58		 Protingent Inc
+56		 Affirma Consulting LLC
+54		 Protiviti Inc
+51		 Lockheed Martin Services
+49		 RS Solutions LLC
+47		 Aim Consulting
+47		 Allovus Design Inc
+47		 Bluehawk LLC
+47		 CompuCom Systems Inc
+47		 Wimmer Solutions Corporation
+46		 110 Consulting Inc
+46		 Aerotek US
+46		 F1 Consultancy
+46		 Nytec Inc
+45		 Year Up Inc
+43		 Luxoft
+42		 Cognizant Technology Solutions
+42		 National Communications
+41		 Hanson Consulting Group
+40		 Daher Acquisitions Inc
+40		 JeffreyM Consulting LLC
+39		 Data Glove Inc
+39		 InConsulting Inc.
+38		 Annik Technology Services
+38		 AS Solution North America Inc
+38		 Cascade Engineering Svcs Inc
+37		 Mighty Media Studios LLC
+36		 Microland Limited
+35		 Aricent Technologies Mauritius
+35		 Brillio LLC
+35		 Easi LLC
+35		 Yoh Services LLC
+34		 McKinsey & CO
+33		 Bridge Partners
+33		 Randstad
+31		 Revel Inc
+30		 Akvelon
+30		 NCC Group Security Services Lt
+30		 Xerox Corporation
+29		 Matisia Consultants
+29		 SAP America
+28		 Avanade Inc
+27		 Kforce
+27		 Sonata Software North America
+26		 CenturyLink
+26		 Denny Mountain Media LLC
+25		 2RBConsulting Inc
+25		 iSoftStone Inc
+25		 Prime 8
+25		 Wicresoft North America
+24		 Filter LLC
+24		 Run Studios LLC
+24		 Zen3 Infosolutions America Inc
+23		 Assembly Media Inc
+23		 Slalom Consulting LLC
+22		 Brickred Systems LLC
+22		 LOGIC20/20 INC
+22		 Robert Half International Inc
+21		 KPMG LLP Seattle
+21		 Redcley LLC
+21		 Slalom Consulting
+20		 Myriad Consulting Inc
+20		 RedCloud Consulting Inc
+20		 Skills Inc.
+20		 Synaxis Corporation
+19		 Echo Services Inc
+18		 Biblioso Corporation
+18		 Cisco Systems Inc.
+18		 Coppei Creek Inc
+18		 Cortac Group Inc
+18		 CSI Interfusion Inc
+18		 N3 LLC
+18		 Pinkerton Inc
+18		 Team Red Dog
+17		 Kalvi Consulting Services Inc
+17		 Motiv Inc
+17		 Quala Inc
+17		 VMC Consulting Corporation
+17		 Wicresoft
+16		 Harvey Nash
+16		 Projectline Services
+15		 Hitachi Consulting Corporation
+15		 Persistent Systems Ltd.
+15		 WaferWire Cloud Technologies
+14		 Blueprint Consulting Services
+14		 Cadence 3 LLC
+14		 Iron Mountain Information Mgmt
+14		 Loft 9 LLC
+14		 Nayamode Inc
+14		 Resources Connection Inc
+14		 Technosoft Corporation
+14		 Teleion Consulting LLC
+13		 Express Services
+13		 Society Consulting
+13		 Steyer Associates Inc
+12		 adaQuest Inc
+12		 Amaxra
+12		 Avora Holdings Ltd
+12		 Boston Consulting Group Inc
+12		 DB Engineering
+12		 Derflan Inc
+12		 RS SOLUTIONS LLC
+12		 Zensa Inc
+11		 ABM
+11		 Corestaff
+11		 Maq LLC
+11		 McKinsey
+11		 Novitex Enterprise Solutions I
+10		 C2S Technologies Inc
+10		 CAD-Based Solutions Inc.
+10		 Divensi Technology Inc
+10		 Fiveby Solutions Inc
+10		 Redmond Technology Partners
+10		 The Lumiere Group LLC
+10		 Valente Global
+10		 Volt
+10		 Wipro Technologies
+9		 Amplify Solutions Inc
+9		 Centric Consulting LLC
+9		 Instawares Holding Co. LLC
+9		 Inviso Corporation
+9		 MBO Partners
+9		 PBJS Inc
+9		 Prowess Consulting LLC
+9		 Troy Consulting LLC
+9		 Xtreme Staffing
+8		 Business Builders
+8		 CES Consulting
+8		 ClearPlan LLC
+8		 Indigo Slate
+8		 KDDS Group LLC
+8		 OSLO Solutions Llc
+8		 Point B Inc
+8		 The Creative Group
+8		 The Kavi Group LLC
+8		 Triex Technologies Inc
+8		 Virtuosity
+7		 425 Consulting Group LLC
+7		 Affine Inc
+7		 Arryve
+7		 Entirenet
+7		 Ioactive Inc
+7		 Mactus Group
+7		 Planet Technologies
+7		 Quadrant Resource LLC
+7		 Rivet Consulting LLC
+7		 Rylem LLC
+7		 Siemens IT Solutions
+7		 Winigent
+7		 Wolfgang Puck
+7		 Year Up Professional Resources
+6		 Act 1
+6		 Ares
+6		 BDO USA LLP
+6		 Caiman Consulting Corp
+6		 Decisive Data
+6		 Eiger Marketing Group
+6		 Innovation Arts Group LLC
+6		 KWest Engineering
+6		 Latentview Analytics Corp
+6		 Leszynski Group Inc
+6		 Meeting Solutions Inc
+6		 Metia Solutions INC
+6		 People Tech Group
+6		 SYNECT LLC
+6		 Ten Gun Design
+6		 VALENTE GLOBAL
+5		 Adrenaline Consulting LLC
+5		 Aegis Company
+5		 Arvato Digital Services LLC
+5		 Atriade
+5		 Axelerate LLC
+5		 Burgess Design Inc
+5		 Camber Consulting LLC
+5		 Campfire LLC
+5		 Casaba Security, LLC
+5		 Ciber
+5		 Integrated Talent
+5		 Invenio
+5		 Jones Lang LaSalle
+5		 Mu Sigma Inc.
+5		 Neal Analytics LLC
+5		 Neuroleadership Institute Inc
+5		 Office Team
+5		 OffPiste Consulting
+5		 Omega
+5		 Pointmarc Consulting LLC
+5		 Sonata Software Ltd
+5		 Tele-Concept (Israel) LTD
+5		 Waferwire LLC
+4		 003 LLC
+4		 AGI Global Holdings Cooperatie
+4		 Allegis Group Services Inc
+4		 Blulink Solutions LLC
+4		 Casne Engineering Inc
+4		 Chameleon Technologies Inc
+4		 Chinasoft
+4		 Cigital
+4		 Creative Circle LLC
+4		 CSG Services Corporation
+4		 Daves & Associates
+4		 Kon Tiki Academy Inc
+4		 Lenovo
+4		 LG Consulting Services
+4		 Mod Squad Inc
+4		 Mosaic Sales Solutions
+4		 Murdoch Services
+4		 Northwest Contract Services
+4		 Premera Blue Cross
+4		 RazorFish
+4		 Render Brew
+4		 Securitay Inc
+4		 Simple Concepts Consulting LLC
+4		 Swift Group Inc
+4		 Teknon Corporation
+4		 Unifycloud LLC
+4		 Warner Marketing Inc
+4		 Webtellect LLC
+3		 3Sharp LLC
+3		 A.T. Kearney
+3		 Ally Incorporated
+3		 AM Technical Solutions Inc
+3		 Apex
+3		 Appen Butler Hill Inc
+3		 Apttus Corporation
+3		 ARES Project Management LLC
+3		 Arista Networks
+3		 Aruba Networks
+3		 Blueocean Market Intelligence
+3		 Direct Apps Inc.
+3		 Elearnpad Limited
+3		 Facility Systems Strategies
+3		 Filmateria Digital LLC
+3		 Getting to Green LLC
+3		 Insight
+3		 Juniper Networks Inc
+3		 Kelly Services
+3		 Keystone Strategy LLC
+3		 Lenati LLC
+3		 Lincoln Bay Company
+3		 MNC Services Inc
+3		 Moravia IT
+3		 Possible Worldwide Inc
+3		 Strategic Consulting Services
+3		 TCG Advisors LLC
+3		 The Ananya Group LLC
+3		 The Arnold Group LLC
+3		 Towers Watson Delaware Inc
+3		 Tri Film Productions
+3		 Tricats Consulting Group LLC
+3		 Waypoint Ventures LLC
+3		 Zen3
+2		 Aecom Technical Services Inc
+2		 Alamere Solutions Inc
+2		 AMS DataSerfs
+2		 Aon Risk Services
+2		 Arth Systems
+2		 Arup USA Inc
+2		 Atredis Partners LLC
+2		 AusTech Inc
+2		 Averro
+2		 Bear Communications Inc
+2		 Blankslate marketing
+2		 Bloom Consulting Group Inc
+2		 Bruce Shaw
+2		 C H Robinson Worldwide Inc
+2		 Caelus LLC
+2		 Cascade Business Group LLC
+2		 Catalysis Corporation
+2		 CBRE Inc
+2		 Cloudmoyo Inc
+2		 Coalfire Systems Inc
+2		 Context Information Security
+2		 Currie & Brown Inc
+2		 Denali Consulting
+2		 F5 Networks
+2		 Factspan Inc
+2		 Filter Digital
+2		 GP Strategies Corporation
+2		 GrandMasters
+2		 Guidacent Inc
+2		 Harbortech Mobility Inc
+2		 Hermanson Corp.
+2		 i2e LLC
+2		 IBM
+2		 Inabia Software & Consulting I
+2		 Jetstream Software
+2		 John Galt Solutions
+2		 Leidos
+2		 Lynchpin LLC
+2		 MarketScape Inc
+2		 Matchbox Mobile Ltd
+2		 Metaverse Mod Squad Inc
+2		 Nextant LLC
+2		 Nuvacon Corporation
+2		 Online Training Solutions Inc
+2		 Orange LV Holdings Inc
+2		 Pilot Lab LLC
+2		 Pyramide Productions
+2		 Ramp Technology Group LLC
+2		 Realtime Productions LLC
+2		 Red Sky Blue Water LLC
+2		 Scorch Agency LLC
+2		 Security Innovation
+2		 Simplement Inc
+2		 Strategic Business Decisions
+2		 Suddath
+2		 Sysgain Inc
+2		 The Changing Workplace
+2		 Third Sector New England Inc
+2		 Tiny Lizard
+2		 Tokusaku Inc
+2		 Tregin Solutions Inc
+2		 True Value Solutions LLC
+2		 Tuxedo Technologies Group
+2		 Uptown Treehouse Inc
+2		 Valorem Consulting Group Llc
+2		 VMC
+2		 Wadeware LLC
+2		 Wellspring Family Services
+2		 Worktank Enterprises
+2		 World Wide Technology
+2		 Xtreme
+2		 Zen3 Infosolutions (India) Lim
+2		 ZS Associates
+1		 0965688 BC Ltd
+1		 42Hertz Inc
+1		 47North Marketing Inc
+1		 52 Limited
+1		 A3 Acoustics LLP
+1		 ABB
+1		 AccounTemps
+1		 Adaptive Integration Inc
+1		 Adisys Corporation
+1		 Aditi
+1		 Aimia Proprietary Loyalty US
+1		 AK Nextant Group
+1		 Aon
+1		 AppSense
+1		 AST
+1		 AT&T
+1		 ATS Automation Inc
+1		 Audienz LLC
+1		 Avie Inc
+1		 Azure HANA Support
+1		 BDRGlobal Inc
+1		 BDS MARKETING INC
+1		 BESADVISORS LLC
+1		 Blink Interactive INC
+1		 Blueline Communications
+1		 BO YAN KE JI GU FEN YOU XIAN
+1		 Brainhunter
+1		 Building Information Systems
+1		 Cardinal Media
+1		 Caveon LLC
+1		 Charles Kingsford-Smith
+1		 Chinook Group
+1		 Clayton Group LLC
+1		 CLOUD ASSERT LLC
+1		 Cloud611 Corp
+1		 Columbia Resource Group LLC
+1		 Comscore Inc.
+1		 Content Master Ltd
+1		 Corporate Employment Resources
+1		 Cummins Northwest
+1		 Cybage Software Inc
+1		 DIGISIGNALS INC
+1		 Digital Dominion Inc
+1		 Drumroll
+1		 Dubs Inc
+1		 Electronic Cooling Solutions
+1		 EMC
+1		 Equity Packaging Inc
+1		 Esage Group LLC
+1		 eSpline LLC
+1		 Evalueserve Inc
+1		 Excel
+1		 Expeditors Intl of Washington
+1		 Forum Corporation
+1		 Freemind Seattle LLC
+1		 FSI Inc
+1		 Gensler
+1		 Globallogic Inc
+1		 GLY Construction
+1		 Graebel Quality Movers
+1		 GuidePost Solutions LLC
+1		 HellDog Music LLC
+1		 Hitachi Consulting Corp
+1		 Holly Klein
+1		 Idea Entity Corporation
+1		 IFG
+1		 Intellectual Property Services
+1		 Intergen Limited
+1		 Ipensatori LLC
+1		 ITC Infotech (USA) Inc
+1		 Jacobs Project Mgmt Co
+1		 K Force
+1		 Kalles Group
+1		 Keaton Whitten
+1		 Keenan Reid Corporation
+1		 KEYSIGHT TECHNOLOGIES INC.
+1		 Konkasoft LLC
+1		 Kripya LLC
+1		 L&T
+1		 L&T Technology Services Ltd
+1		 Law Office of Rachel Han Huner
+1		 Linda Werner & Associates Inc
+1		 Little Engine Inc
+1		 Lumar Inc
+1		 M Arthur Gensler Jr & Assoc.
+1		 Margaret Storey
+1		 Marketscape Inc
+1		 MarketStar Corporation
+1		 Meyers Supply Chain Services
+1		 MNC GmbH
+1		 MRT Insights
+1		 Mundie & Associates
+1		 National Systems America L.P
+1		 NetApp
+1		 Network Appliance
+1		 Nfolks LLC
+1		 OAC Services
+1		 OLIVE & GOOSE LLC
+1		 Oxford Global Resources
+1		 P2 Solutions Group LLC
+1		 Pactera
+1		 Perceptyx Inc
+1		 Perfect Planit Inc
+1		 Pinkertons
+1		 Plain Concepts Corporation
+1		 Predictive Systems Inc
+1		 Premise Health
+1		 Presenter Group LLC
+1		 Quilogy
+1		 Rainiertek LLC
+1		 Ramp Group Corporation
+1		 Red Dog Interactive
+1		 Red Door Collaborative LLC
+1		 RGen Solutions
+1		 Robert Collie
+1		 Robert Ingebretsen LLC
+1		 Sage Ways Inc
+1		 SCC
+1		 Schawk USA Inc
+1		 Seed IP Law Group
+1		 Shanahan Janet
+1		 Silver Fox
+1		 Smartlytics LLC
+1		 Sogeti USA
+1		 Sound Planning
+1		 Spark Marketing
+1		 Spirent
+1		 Strong-Bridge LLC
+1		 Sunrise Creative Group INC
+1		 Symantec
+1		 Synaxis
+1		 Syntasa Corporation
+1		 SYSSHARP LLC
+1		 TACTILE INC
+1		 Tech Talenta Inc
+1		 Tekbloom Limited
+1		 Tekrek Solutions Inc
+1		 TEKZENIT INC
+1		 TENW
+1		 The Chinook Group LLC
+1		 The Evergreen Group LLC
+1		 The Spur Group Inc
+1		 Toshiba
+1		 Tow Degrees (Slalom)
+1		 Traackr Inc
+1		 Tri-Digital
+1		 Turn 10
+1		 Two Degrees
+1		 Tyco Fire & Security (US)
+1		 Ungerboeck
+1		 USER RESEARCH INTERNATIONAL
+1		 User Research Intl
+1		 Valorem Consulting
+1		 Vanderhouwen & Associates Inc
+1		 Vexillum Consulting
+1		 VIAR Visual Communications Inc
+1		 Vidyatech Solutions Private LT
+1		 Virtuosity Consulting Group
+1		 Visual Byte Studios LLC
+1		 VTEAM LABS LLC
+1		 Wes Rataushk & Assc Inc
+1		 Wicresoft North America Ltd
+1		 Widenet
+1		 William Laing
+1		 Wimmer Solutions
+1		 Wintellect LLC
+1		 Wipro
+1		 Wirestone
+1		 Xynergies LLC
+1		 YOJ Creative
+1		 Zenitas LLC
+1		 Zeus Versace
