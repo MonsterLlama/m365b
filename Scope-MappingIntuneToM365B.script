@@ -1,0 +1,280 @@
+﻿//Script GUID:a369f18e-3551-44df-ae31-b8212e9c4a24
+//Used for tracking history
+
+//#DECLARE date           DateTime = new DateTime(year:2017, month:11, day:01);
+//#DECLARE year           string   = @date.ToString("yyyy");
+//#DECLARE month          string   = @date.ToString("MM");
+//#DECLARE day            string   = @date.ToString("dd");
+
+//#DECLARE dir            string   = String.Format(@"/shares/AzureAnalytics.Dev/AzureAnalytics.Dev.PublishedData/Microsoft.Intune.IntunePE.SqlAggregator/AppService_AppEnforcementStatus/{0}/{1}/{2}/",@year, @month, @day);
+
+//#DECLARE hourly00 string = String.Format(@"{0}/00/Data_{1}_{2}_{3}_00.ss",@dir,@year,@month,@day);
+//#DECLARE hourly01 string = String.Format(@"{0}/01/Data_{1}_{2}_{3}_01.ss",@dir,@year,@month,@day);
+//#DECLARE hourly02 string = String.Format(@"{0}/02/Data_{1}_{2}_{3}_02.ss",@dir,@year,@month,@day);
+//#DECLARE hourly03 string = String.Format(@"{0}/03/Data_{1}_{2}_{3}_03.ss",@dir,@year,@month,@day);
+//#DECLARE hourly04 string = String.Format(@"{0}/04/Data_{1}_{2}_{3}_04.ss",@dir,@year,@month,@day);
+//#DECLARE hourly05 string = String.Format(@"{0}/05/Data_{1}_{2}_{3}_05.ss",@dir,@year,@month,@day);
+//#DECLARE hourly06 string = String.Format(@"{0}/06/Data_{1}_{2}_{3}_06.ss",@dir,@year,@month,@day);
+//#DECLARE hourly07 string = String.Format(@"{0}/07/Data_{1}_{2}_{3}_07.ss",@dir,@year,@month,@day);
+//#DECLARE hourly08 string = String.Format(@"{0}/08/Data_{1}_{2}_{3}_08.ss",@dir,@year,@month,@day);
+//#DECLARE hourly09 string = String.Format(@"{0}/09/Data_{1}_{2}_{3}_09.ss",@dir,@year,@month,@day);
+//#DECLARE hourly10 string = String.Format(@"{0}/10/Data_{1}_{2}_{3}_10.ss",@dir,@year,@month,@day);
+//#DECLARE hourly11 string = String.Format(@"{0}/11/Data_{1}_{2}_{3}_11.ss",@dir,@year,@month,@day);
+//#DECLARE hourly12 string = String.Format(@"{0}/12/Data_{1}_{2}_{3}_12.ss",@dir,@year,@month,@day);
+//#DECLARE hourly13 string = String.Format(@"{0}/13/Data_{1}_{2}_{3}_13.ss",@dir,@year,@month,@day);
+//#DECLARE hourly14 string = String.Format(@"{0}/14/Data_{1}_{2}_{3}_14.ss",@dir,@year,@month,@day);
+//#DECLARE hourly15 string = String.Format(@"{0}/15/Data_{1}_{2}_{3}_15.ss",@dir,@year,@month,@day);
+//#DECLARE hourly16 string = String.Format(@"{0}/16/Data_{1}_{2}_{3}_16.ss",@dir,@year,@month,@day);
+//#DECLARE hourly17 string = String.Format(@"{0}/17/Data_{1}_{2}_{3}_17.ss",@dir,@year,@month,@day);
+//#DECLARE hourly18 string = String.Format(@"{0}/18/Data_{1}_{2}_{3}_18.ss",@dir,@year,@month,@day);
+//#DECLARE hourly19 string = String.Format(@"{0}/19/Data_{1}_{2}_{3}_19.ss",@dir,@year,@month,@day);
+//#DECLARE hourly20 string = String.Format(@"{0}/20/Data_{1}_{2}_{3}_20.ss",@dir,@year,@month,@day);
+//#DECLARE hourly21 string = String.Format(@"{0}/21/Data_{1}_{2}_{3}_21.ss",@dir,@year,@month,@day);
+//#DECLARE hourly22 string = String.Format(@"{0}/22/Data_{1}_{2}_{3}_22.ss",@dir,@year,@month,@day);
+//#DECLARE hourly23 string = String.Format(@"{0}/23/Data_{1}_{2}_{3}_23.ss",@dir,@year,@month,@day);
+//
+
+//hourly00_ss = SSTREAM @hourly00; hourly01_ss = SSTREAM @hourly01; hourly02_ss = SSTREAM @hourly02; hourly03_ss = SSTREAM @hourly03; hourly04_ss = SSTREAM @hourly04; hourly05_ss = SSTREAM @hourly05;
+//hourly06_ss = SSTREAM @hourly06; hourly07_ss = SSTREAM @hourly07; hourly08_ss = SSTREAM @hourly08; hourly09_ss = SSTREAM @hourly09; hourly10_ss = SSTREAM @hourly10; hourly11_ss = SSTREAM @hourly11;
+//hourly12_ss = SSTREAM @hourly12; hourly13_ss = SSTREAM @hourly13; hourly14_ss = SSTREAM @hourly14; hourly15_ss = SSTREAM @hourly15; hourly16_ss = SSTREAM @hourly16; hourly17_ss = SSTREAM @hourly17;
+//hourly18_ss = SSTREAM @hourly18; hourly19_ss = SSTREAM @hourly19; hourly20_ss = SSTREAM @hourly20; hourly21_ss = SSTREAM @hourly21; hourly22_ss = SSTREAM @hourly22; hourly23_ss = SSTREAM @hourly23;
+
+
+//#DECLARE AccountIDGUiD string = @"84406b43-e747-407b-9117-8fa137af23bd"; // INTERACTIVO CONTACT CENTER, Account Created: 10/27/2017, Sum Of MDM: 10
+//#DECLARE AccountIDGUiD string = @"00031b8f-a421-4f25-b5ca-88f1aca810a8";
+
+
+#DECLARE DataStartDate string = "2017-08-02";
+#DECLARE DataEndDate   string = "2017-11-06";
+
+#DECLARE SetupData_Path string = string.Format(@"/shares/AzureAnalytics.Dev/AzureAnalytics.Dev.PublishedData/Microsoft.Intune.IntunePE.SqlAggregator/AppService_AppEnforcementStatus/%Y/%m/%d/%h/Data_%Y_%m_%d_%h.ss?date=({0})...({1})&hour=00...23&sparsestreamset=true", @DataStartDate, @DataEndDate);
+//                                               /shares/AzureAnalytics.Dev/AzureAnalytics.Dev.PublishedData/Microsoft.Intune.IntunePE.SqlAggregator/AppService_AppEnforcementStatus/2017/11/03/00/
+stream_ss = SSTREAM @SetupData_Path;
+
+resultsTable = 
+    SELECT DISTINCT * FROM stream_ss WHERE AccountId IN ("4d70d7d5-27d5-4629-8f69-8e70b0cd088d",
+"d0bb5acf-86ff-41da-a286-3814ebf90b18",
+"29af7cb7-03d6-4f0e-af97-047014eff9d8",
+"d67c9e6d-d388-4495-8ccc-490895b1444a",
+"21072bc8-5f87-4c6c-ab92-44a24aba98f2",
+"c55ac3dd-c668-48ce-a490-8f36e9425d79",
+"dc56b0bf-74d3-4111-905b-4a34a9b5e92e",
+"fd968947-10b7-4db2-a48c-73a081e88936",
+"6b068b8c-73d3-45ec-adb1-9d2dc9f76ec4",
+"8725de05-eab0-425a-aa32-39d9868ef3f7",
+"b8bcb0b5-fe5b-4690-903e-aae8d451ab37",
+"362fb1e2-60e1-404f-8950-6d535ef1ceb7",
+"f8e98181-138d-4e60-9ace-5150048957b8",
+"d491e7b1-409e-43a0-aaa6-0cdf3a4e1eb1",
+"5db0e6e9-49de-453e-b52c-fe86d1d9a131",
+"8c998ed9-db7a-4ac8-ac9f-98948fc6e0bb",
+"a932986c-e825-4efe-858f-7b15e7e91266",
+"20c396f1-71da-4e43-827b-05e5aadad55f",
+"7811b522-6766-4b25-8321-772bc7f922db",
+"eee64441-e80c-47ca-b12b-8acc93ed2e97",
+"370e8768-cb94-4e38-8bb5-40d438f19960",
+"ce0fed6d-1e02-438a-93ae-854c41be25b4",
+"222fe23d-853c-4840-84f2-ffaf002203c1",
+"450cc0e8-f7d8-4fe7-ae90-7a172cbd1208",
+"75cdca25-8461-41a8-9408-a72d0cd3a84c",
+"19e41e79-66c1-48fb-860c-407249fa35d4",
+"b9114a4b-49b2-457c-ad29-a3ca4d8d6787",
+"87af8952-eb10-4a8e-8fb7-0244adc1cbcd",
+"e12a8307-db07-4c82-bf2d-3f22c87e9ea9",
+"afa03f7d-74af-4003-bb88-92aed24eab3f",
+"c15e55da-ea93-43c0-bac7-d18977e4d7b7",
+"456b0144-7364-4790-b817-217df8fd72f9",
+"55f82021-289f-4bb0-99e1-e0fd7eba667b",
+"e34c5615-b4e3-481c-abc8-602581f2e735",
+"33807aa6-b1b3-40fa-9639-2ad8ef59525d",
+"bbab5740-09ee-4b62-84cd-c9e26ed6840c",
+"a57e612e-8d30-4800-a865-22a2bd653ba6",
+"3ef46d57-2ab1-4e75-ba19-11a93fa29a88",
+"eb056483-f01a-458a-9cb0-81f325fe4838",
+"8520f71f-bfb7-4f54-9e5d-c6ec3760575d",
+"42111137-e840-42b2-9e68-2662119e1111",
+"5e3d1e0b-5f97-4df9-aef3-7505a752e898",
+"1df6b911-e907-446b-882d-889908e330ca",
+"fae1291c-c24b-488f-90a5-af42ef6678ec",
+"0f61322a-a838-4bdd-a25d-4e8b09f618d1",
+"c218971e-4ea3-4804-8a27-65d5ee64badb",
+"d19f13ca-3adc-4baf-b28c-d1b698cb0fc7",
+"3e5eb5b5-1c04-41d1-ac61-01411201c783",
+"1c4f7760-665e-4247-bd0f-c0febeba8d99",
+"f5cef574-bdfa-4f0c-a592-ddfe07e8bfbb",
+"0c35250a-e0b0-4854-94ee-2b210b42c770",
+"0b8a82b2-7047-4a62-a735-cd5dc3bab0c8",
+"fdbbff8a-a45f-4774-9b3f-3a588d0aa963",
+"5f2621b6-46e0-4ab5-8881-0df0b4fcdad2",
+"c477c9ca-08f3-4771-aa89-1dfb7d99e42c",
+"e156a154-6471-4a67-a8be-c8ce906bf90c",
+"882f4d04-72ce-4be9-882f-946e3e21e66b",
+"bc7964ff-783f-45b0-b550-6d8e0da9c827",
+"cc23aaf9-1d45-4324-9124-199659c04fb2",
+"11594f80-10c3-4b8d-bf96-c75ac21737f4",
+"3be95135-ef83-4be1-8fa9-2dbe70ffa3de",
+"c3e0cc15-7b36-4aaf-a7a8-ffb42a3f4dfb",
+"979781e9-9c26-4e66-ae6b-edc257aed466",
+"91e49c42-e8c3-482a-a953-0b867b3e71d0",
+"cc9ba815-c499-44d0-8749-a2d41027cae7",
+"3f1657d4-3d28-49ff-b824-229cdb344439",
+"d69ee202-7582-4f4b-b91a-76d61f66cc01",
+"1ff4bd17-b614-49e7-a1be-bd93ca5d8c04",
+"fe7fc2a2-be7e-4eaa-9af5-ac8890da9650",
+"961ef4c8-e5b5-405d-a12c-f634db6bd38c",
+"8f13a90a-7ec8-42f5-9173-0eaa3e5e54be",
+"3a41c0a7-4c6a-4f3b-a544-79ffa980ff90",
+"12c64712-7e28-4539-b0e2-531121fa1bcb",
+"5b36091f-e3b4-406a-b2c9-7f2ff86a7ae4",
+"c198ff5f-0013-4867-832c-9c0e6f9c1831",
+"5525a342-2ca7-492a-b533-9182eba42abd",
+"8d44d58a-ab70-4f0a-bb9f-3a3af996f79f",
+"acf084a4-7cef-479f-a09b-df3230e43c22",
+"7e7b431d-dc96-4d96-863a-90d844044169",
+"fa5433c4-0421-4ea3-96bb-750609e54f7a",
+"5d43d08e-5f8c-42e3-8dff-a94b8e87eeec",
+"cc97f0e8-fe93-43b6-8b59-0e384b5de077",
+"29316c95-6162-4ce9-8210-0b842fd19767",
+"332e36d0-55eb-4038-a40f-099057676419",
+"88f1bd0f-8d30-4dd0-94d5-629da4f5c860",
+"350e571b-9f33-4ff7-90ca-e2fd291279e7",
+"1ff047c3-ff14-4c5d-b672-0578abf9afd6",
+"d59105aa-3408-4b50-8581-e3d9fae3b16b",
+"d8eea0d6-bb3e-44fb-892c-0e1690045389",
+"2b1609ae-7492-41f8-92df-55323873e985",
+"025a88f8-bc7d-4ebe-8e26-953eddd791c2",
+"b0b3bee0-9220-4a0b-9535-1179e632c29d",
+"d9a8cc11-b7be-43ae-8cf1-af9203180204",
+"9a31087a-3491-4b92-b4f6-e3de57c99dee",
+"2d0480a9-8221-402c-82c1-f05e4c322b75",
+"93872b62-53c2-442f-81f4-42f369142f76",
+"1498629f-d52b-40f8-8cf2-a65381fc12b7",
+"ed91094f-6472-4761-b97d-59b100bc9508",
+"0b94fb25-c09e-44f4-a235-3b96d9c41541",
+"6249794b-84b2-4e00-849a-3e54d99a8d05",
+"94ceb4a1-69ae-4739-9be1-c6a85f7d459c",
+"ae8e75df-cce8-404b-854a-0797d2ff016c",
+"f92d3db3-f6af-4db9-ad55-6d908bfd66d2",
+"20eba798-b86e-45bc-a615-5dfcc7f39a26",
+"f0172ada-72af-44d2-82ad-57f96cc51fc4",
+"8ac001b6-2819-41ef-9c26-f6faa11b80ec",
+"b26ab455-30b8-4eb3-a1a8-a4332ed47583",
+"6bcdc58b-1651-4212-9e70-14a66b892977",
+"7c4df672-8e3d-4db7-b6f2-a59a49e14a5b",
+"bf231c53-2d3c-4acd-9437-04e783dde5c7",
+"f6f069b1-34ad-471c-92bd-ee6a178bec23",
+"9cff2624-7f9b-458a-af8c-8d21e89dc9b0",
+"f6d8d92c-2999-4875-83c4-bf73683fa923",
+"00706435-ba68-4dd7-8d67-4fca5c8a82f4",
+"b1026a06-75ee-40ba-b99c-b6f39341b6c6",
+"2ba231e5-60ce-4771-834c-a311a0f27e7e",
+"aa6a78ec-0203-4aed-8a90-c3b3eb051292",
+"bc449e39-d474-4152-872b-e6715e6c5514",
+"06812c15-16be-4ce4-8299-e91324862f47",
+"4a8f916e-29b7-4c75-a14f-a60b99e5ff73",
+"72753972-986d-4664-98e9-0ca3be04081f",
+"3aba2133-6e95-4e11-991e-069a05ea9e29",
+"73b42911-6d8e-4792-bfb1-136cca7139d5",
+"0691b1cb-29a0-4808-97a8-75887c140462",
+"a5d92937-6073-4539-ad76-865795f6abd2",
+"6bf615d8-7f8d-4259-858a-c11809d725c8",
+"1c840f59-9ac4-4d66-bc3d-a30a91573546",
+"91beac45-2576-4c2b-90b1-39789bd066b2",
+"81d2ad6e-8a66-484a-800b-60c071dc77e6",
+"ec23354b-955c-469c-ba56-8f6774b1f3b0",
+"4b6f9191-9e26-49e6-bc46-dcdf99b53049",
+"2e15c18b-9c22-4c88-a6ec-fb857b01b955",
+"ec23354b-955c-469c-ba56-8f6774b1f3b0",
+"ded51ea3-8caf-4359-b3d0-78c1f0e8222f",
+"689d7b91-1e4a-4738-b2ab-1ec938591704",
+"c8dbeb88-2257-4a4f-ab1a-63ddf23e63df",
+"e5b9c644-c4af-47c0-9c8b-c64b335dc380",
+"74a89c10-10fe-4bb5-92a2-d7475aedebe8",
+"69458381-b68f-4862-b72c-a981a7b5d278",
+"2cf084a3-792d-48f5-ae56-579c58293b4b",
+"28c2dbe3-6361-4176-8e19-e44a8ec14eab",
+"97ac1544-2e22-46c4-a670-bb89f9c97af1",
+"eb417572-c087-4131-bea5-7fd5c1fabc9e",
+"0ee6d2f6-2011-4e69-b62b-8826e4bd7132",
+"1e04bf8b-d884-4322-b112-77ca5de30c9b",
+"6b99bfde-b24c-4cd5-9d94-88cc97f2611d",
+"7a6139ec-3ebe-41ea-a480-c9ae1b8b9a9d",
+"8ca87a1f-1815-40be-b41f-1726d5ec1141",
+"d46b788e-2fd6-4b26-a152-e4766c4e7f34",
+"f3711f7a-ab01-406a-9ceb-2cc3c5498821",
+"b01c67d6-ce41-4d9f-9e2d-da92bb1cd88b",
+"609a1821-dedb-418c-8822-29064bd506cd",
+"8f88e538-7ddf-498e-973b-af8f74066172",
+"268451cc-f0d3-4fb8-8fe9-fed023922817",
+"ee76c044-16cb-4c90-9fc5-5df3e80bfaa7",
+"1795f51d-5dac-4ea1-92b5-b4236537cc9b",
+"b7beaa1c-a525-45ff-861f-74618bd3260b",
+"dfcf9133-feac-40ac-8566-1f9014762522",
+"3aa1735d-88e6-4441-8f9b-7afe8885e5f2",
+"0cc323db-0646-4654-9d95-82b998a0f3f0",
+"a86550fd-22b6-40c7-9918-10100ecbd885",
+"ee12dcfd-2c55-41c6-be59-b8436e3d5fd9",
+"30b8185d-86ec-4764-befe-aa53ce7aa901",
+"a2053997-d9cc-43e9-9b55-96486e133981",
+"298077e8-5740-4218-ba71-cc7239d59024",
+"d9a94418-3c08-489e-acd7-39d362abbb1d",
+"aaeabf6f-c140-4b7e-a2c3-cf1b6dc8fbe8",
+"7584ea2e-36cc-4cd9-9253-790154591a7e",
+"6ee76f2b-d6cc-4fea-8882-b5415701da11",
+"b049082b-6d95-4cee-9b07-c9201a55e2d2",
+"40601b14-f2eb-446c-be29-996ccb14f1ab",
+"574ec0c1-5195-4adf-a404-263c4cefcea6",
+"dd33adc0-b4a4-43d2-b3fe-74c724749758",
+"5054f456-c866-43df-89eb-f9f3de2e886d",
+"2ec9f32d-6ebc-4381-8b9f-507f78a1bcfc",
+"a2ad2858-87f5-46fd-acb4-954985010bc5",
+"0703edb6-bc93-4fa5-b044-b2cac988e52f",
+"186e5bf5-7fb3-4007-b72d-96d5e9e434b4",
+"f3d1a0cb-9fb8-479e-8eb1-914ce8657762",
+"1a5daf7e-7b45-435f-8175-ab9614dd73c6",
+"d92c9d2e-0e68-49cd-ba3c-578dbb5bb08e",
+"7f55d2a4-f84d-41ef-a0af-9c7d03ea6218",
+"8acfe51a-7cb4-46d3-a6b9-05e5baac3768",
+"f1a2d64a-eb52-4771-ac67-ac3af1ebc6bd",
+"12bd02a4-670e-4ecf-bc74-c7c1c0a2b7f4",
+"63016271-12ea-41e8-bb64-d28c7875c3c9",
+"e08a066b-b898-40ae-84b4-64dbb4e11050",
+"7e972249-bdcd-40f2-a22c-72bf39e26e7e",
+"fd050f6b-7adb-41f5-beb2-79d1eab33814",
+"bc75b6e3-0d8e-4690-9fab-fd3633b97a9f",
+"1a84e74d-9c2d-4725-821b-c2d6b82fb853",
+"63fe590a-8678-45dd-940f-30c825c353e8",
+"7ff7fcc0-b98a-49f1-88b7-13e2ab55c091",
+"5dc2a174-16aa-4e03-a907-7a202de42f9c",
+"e2e56277-dd0b-4f69-a14d-ec852e8e08ee",
+"b6e64d9d-e62e-4a42-8e0f-ee74c931fd21",
+"a70f4f36-42ea-48a3-bfc8-a9e05e7f9b15",
+"3cf3b16e-9668-4d82-99cc-b8672e65ecd5",
+"dfd5eeed-7881-4796-b2c1-31b6e0f50002",
+"cacf65ad-9172-4a62-a099-c6948a67b5a4",
+"4728c8b0-0fb8-4b07-b08f-0b4eddc5a00a",
+"73d16f88-0b01-4c53-b89c-eceeea438af7",
+"1a37237d-9463-448e-bbde-f3d1e4b7a480",
+"8a17f7da-3bdc-4328-af32-9c048af360f4",
+"c5600b66-9891-4ce9-8528-694ac8aaccfe",
+"8e6186a5-de0b-4500-b2ec-5749561d81c9",
+"43cda1cd-0570-4983-9c01-1c183f2a0ff0",
+"5002af78-2bd0-4ca8-b12b-4047f971f2cc",
+"09d903e1-8b2b-479c-916f-8c0f821ffdfc",
+"13a55585-078c-4273-aeb6-3331bf90f130",
+"53c69922-e45c-4fc9-ba8a-5fc759db4d53",
+"ae10229f-f94c-4723-94f9-8248811b0673",
+"43831993-6193-4999-9fd2-50e9fa682c56",
+"a16fc97f-b36a-48da-bf02-258c0428d073",
+"08d2e0fb-5353-4ebf-beae-9eea6259bffa",
+"2b500449-a673-44fa-9d9d-e78884531478",
+"4417f3e0-824d-47e7-81ae-3ef10fba38e7",
+"ca8f09f5-335e-4fc5-8041-f5b472a02eef");
+
+
+//#DECLARE HourlyOutput string = String.Format("/my/Intune/Hours.{0}-{1}-{2}.csv",@year,@month,@day);
+#DECLARE output       string = @"/my/Intune/Data.from.2017.10.01.thru.2017.11.06.csv";
+
+OUTPUT resultsTable
+TO     @output
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);

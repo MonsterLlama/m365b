@@ -1,0 +1,85 @@
+﻿REFERENCE "/shares/exchange.storage.prod/Resources/Binaries/Microsoft.Datacenter.Datamining.Cosmos.dll";
+USING Microsoft.Datacenter.Datamining.Cosmos;
+
+#DECLARE DataStartDate string = "2017-08-02";
+#DECLARE DataEndDate   string = "2017-11-27";
+#DECLARE SkuName       string = "MICROSOFT 365 BUSINESS"; // case sensitive
+
+#DECLARE OutPutFilePath string = "/my/csp/CompleteSetupTenants.Aug02-Nov27.csv";
+
+#DECLARE SetupData_Path string = string.Format(@"/shares/exchange.storage.prod/local/Aggregated/Datasets/Private/O365SetupNoDomain_Dly_Logins/O365SetupNoDomain_Dly_Logins_%Y_%m_%d.ss?date=({0})...({1})&sparsestreamset=true", @DataStartDate, @DataEndDate);
+FilteredSetupLogs = SSTREAM @SetupData_Path;
+
+SetupStart = SELECT DISTINCT TID AS OMSTenantId 
+    FROM FilteredSetupLogs;
+
+CompleteSetupTenants =
+    SELECT DISTINCT TID AS OMSTenantId
+    FROM FilteredSetupLogs
+    WHERE TagID == "414802" OR
+          TagID == "419780";
+                
+// Get Tenant Information from ODIN tenant view
+
+// eg. https://cosmos14.osdinfra.net/cosmos/office.adhoc/shares/OBD.prod/local/Aggregated/Datasets/Public/Office_FullTenant/2017/11/Office_FullTenant_2017_11_05.ss
+#DECLARE view_path  string = @"/shares/bus.prod/local/office/Odin/Tenant/OfficeDataTenant.view";
+#DECLARE OStartDate string = DateTime.Now.Date.AddDays(-1).ToString("yyyy-MM-dd");
+
+OfficeTenant =
+    VIEW @view_path
+    PARAMS
+    (
+        StartSnapshotTime = @OStartDate,
+        EndSnapshotTime   = @OStartDate 
+    );
+        
+O365TenantDatasetStream = SELECT DISTINCT
+           Id AS OMSTenantId,     
+           Name,
+           subscription.Offer.Name AS OfferName
+    FROM OfficeTenant
+    CROSS APPLY OfficeTenant.Subscriptions AS subscription;
+      // WHERE subscription.State == SubscriptionStateValue.Active OR subscription.State == SubscriptionStateValue.InGracePeriod;  // active or in grace subscription */
+
+O365TenantDatasetSubs = SELECT OMSTenantId,
+                               Name,
+                               string.Join(";", LIST(DISTINCT OfferName).ToArray()) AS Subscriptions
+    FROM O365TenantDatasetStream
+    GROUP BY OMSTenantId, Name;
+
+//Join Complete Setup tenants with tenant Info. Use Inner join since we need subscription later for query.
+CompleteSetupTenantsInfo = SELECT CompleteSetupTenants.OMSTenantId,
+                                  O365TenantDatasetSubs.Name,
+                                  O365TenantDatasetSubs.Subscriptions
+                                  FROM CompleteSetupTenants
+                                       INNER JOIN O365TenantDatasetSubs
+                                       ON CompleteSetupTenants.OMSTenantId == O365TenantDatasetSubs.OMSTenantId;
+
+SetupTenantsWithSKU = SELECT OMSTenantId,
+                             Name,
+                             Subscriptions
+                             FROM CompleteSetupTenantsInfo
+    WHERE Subscriptions.ToUpper().Contains(@SkuName);
+
+OUTPUT SetupTenantsWithSKU
+TO @OutPutFilePath
+USING CSVOutputter;
+
+//Join Start Setup tenants with tenant Info. Use Inner join since we need subscription later for query.
+StartSetupTenantsInfo = SELECT SetupStart.OMSTenantId,
+                                  O365TenantDatasetSubs.Name,
+                                  O365TenantDatasetSubs.Subscriptions
+                                  FROM SetupStart
+                                       INNER JOIN O365TenantDatasetSubs
+                                       ON SetupStart.OMSTenantId == O365TenantDatasetSubs.OMSTenantId;
+
+SetupTenantsWithSKU = SELECT OMSTenantId,
+                             Name,
+                             Subscriptions
+                             FROM StartSetupTenantsInfo
+    WHERE Subscriptions.ToUpper().Contains(@SkuName);
+
+OUTPUT SetupTenantsWithSKU
+TO "/my/csp/StartSetupTenants.Aug02-Nov27.csv"
+USING CSVOutputter;
+

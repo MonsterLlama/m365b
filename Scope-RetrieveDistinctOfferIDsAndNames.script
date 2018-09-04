@@ -1,0 +1,40 @@
+﻿//Script GUID:828654e2-de71-4234-9ea0-c2dd5a3c7eb6
+//Used for tracking history
+
+
+#DECLARE year             string = DateTime.Now.AddHours(-24).ToString("yyyy");
+#DECLARE month            string = DateTime.Now.AddHours(-24).ToString("MM");
+#DECLARE dropFolder       string = @"/shares/bus.prod/local/office/Aggregated/Datasets/Public/Office_FullSubscription/" + @year + "/" + @month + "/";
+#DECLARE streamName       string = @"Office_FullSubscription_" + DateTime.Now.AddHours(-24).ToString("yyyy_MM_dd") + ".ss";
+#DECLARE structuredStream string = @dropFolder + @streamName;
+
+source_ss = SSTREAM @structuredStream;
+
+search_result =
+    SELECT 
+           DISTINCT
+           //Subscription_OrganizationUnitName AS OrgUnitName,
+           //Subscription_OMSTenantId AS TenantID,
+           Offer_Id AS OfferID,
+           //Subscription_Id AS ID,
+           Offer_Name AS OfferName
+           //Subscription_IncludedQuantity AS Quantity,
+           //Subscription_StartDate AS StartDate,
+           //Subscription_EndDate AS EndDate,
+           //Tenant_Name AS TenantName,
+           //Subscription_ChannelName AS ChannelType,
+           //Subscription_StateKey AS State
+           //Subscription_LastStateChangeDate AS LastStateChangeDate,
+           //Subscription_LastDisabledDate AS LastDisabledDate
+           //Subscription_DeprovisionedDate AS DeprovisionedDate,
+           //Subscription_TrialStartDate AS TrialStartDate,
+           //Subscription_TrialEndDate AS TrialEndDate
+    FROM   source_ss
+    WHERE  Subscription_StateKey == 1;
+
+
+#DECLARE outputFileName string = @"/my/DistinctOfferIDsAndNames-" + DateTime.Now.AddHours(-24).ToString("yyyy-MM-dd") + ".csv";
+
+OUTPUT search_result
+TO     @outputFileName
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);

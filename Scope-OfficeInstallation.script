@@ -1,0 +1,34 @@
+﻿//Script GUID:629fb11f-68bc-4bd3-95dd-041224c12671
+//Used for tracking history
+REFERENCE "/shares/exchange.storage.prod/Resources/Binaries/Microsoft.Datacenter.Datamining.Cosmos.dll";
+USING Microsoft.Datacenter.Datamining.Cosmos;
+
+#DECLARE StartDate string = "2017-11-26";
+#DECLARE EndDate   string = "2017-11-27";
+
+OutputData =
+    SELECT TimeStamp,
+           TenantID.ToString() AS TenantID,
+           RequestPath AS PN,
+           AdHoc0,
+           AdHoc1
+    FROM
+    (
+       VIEW "/shares/0365exp.adhoc/O365DataPipeline/Resources/Views/AdminServerLogs.view"
+       PARAMS
+        (
+            StartDate = @StartDate,
+            EndDate   = @EndDate,
+            RetrieveSessionData   = true,
+            RetrieveMessageData   = false,
+            RetrieveRequestData   = true,
+            RetrieveExceptionData = false
+        )
+    )
+    WHERE TagID == 421302 AND
+          AdHoc0.ToLower().Contains("deviceappmanagement/mobileapps") AND
+          AdHoc0.ToLower().Contains("/assign");
+          
+OUTPUT OutputData
+TO "/my/csp/OfficeInstallation.2017.11.26-2017.11.27.csv"
+USING CSVOutputter;

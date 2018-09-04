@@ -1,0 +1,13 @@
+﻿//Script GUID:39c7a02c-55c7-4f9c-ae1e-56137af521f5
+//Used for tracking history
+
+
+AccountIDs = EXTRACT
+            AccountId : string
+            FROM @"/my/AccountIDs.csv"
+            USING DefaultTextExtractor(delimiter: ',');
+
+
+OUTPUT AccountIDs
+TO @"/my/Test.csv"
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);

@@ -1,0 +1,34 @@
+﻿//Script GUID:42db515f-0f75-4c2f-9ed7-84952cdb56eb
+//Used for tracking history
+#DECLARE year             string = DateTime.Now.AddHours(-24).ToString("yyyy");
+#DECLARE month            string = DateTime.Now.AddHours(-24).ToString("MM");
+#DECLARE dropFolder       string = @"/shares/bus.prod/local/office/Aggregated/Datasets/Public/Office_FullSubscription/" + @year + "/" + @month + "/";
+#DECLARE streamName       string = @"Office_FullSubscription_" + DateTime.Now.AddHours(-24).ToString("yyyy_MM_dd") + ".ss";
+#DECLARE structuredStream string = @dropFolder + @streamName;
+
+source_ss   = SSTREAM @structuredStream;
+
+//
+// The TenantIDs of Microsoft 365 Business customers.
+//
+search_result = SELECT 
+           s.Subscription_OrganizationUnitName AS OrgUnitName,
+           s.Subscription_OMSTenantId AS TenantID,
+           s.Offer_Id AS OfferID,
+           s.Subscription_Id AS ID,
+           s.Offer_Name AS OfferName,
+           s.Subscription_IncludedQuantity AS Quantity,
+           s.Subscription_StartDate AS StartDate,
+           s.Subscription_EndDate AS EndDate,
+           s.Tenant_Name AS TenantName,
+           s.Subscription_ChannelName AS ChannelType,
+           s.Subscription_StateKey AS State
+             FROM   source_ss AS s
+             WHERE  Subscription_OrganizationUnitName == "D50143A0-A35D-4FD7-A967-4C874BFE498A_TEST_TEST_BUGBASH5"   // 260 overall, 178 ours on 2017/10/24
+             AND    Tenant_Name.StartsWith("M365");
+    
+#DECLARE outputFileName string = @"/my/MyM365bTestTenants-" + DateTime.Now.AddHours(-24).ToString("yyyy-MM-dd") + ".csv";
+
+OUTPUT search_result
+TO     @outputFileName
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);

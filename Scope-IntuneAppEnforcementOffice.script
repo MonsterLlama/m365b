@@ -1,0 +1,36 @@
+﻿//Script GUID:4fc3edde-fdef-408c-859e-a71eea314506
+//Used for tracking history
+
+
+// Exclude the data from runner accounts
+#DECLARE startDate            string = new DateTime(year:2017, month:11, day:15).ToString("yyyy-MM-dd");
+#DECLARE endDate              string = new DateTime(year:2017, month:11, day:20).ToString("yyyy-MM-dd"); //DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+#DECLARE sparsestreamset_ss string   = string.Format(@"/shares/AzureAnalytics.Dev/AzureAnalytics.Dev.PublishedData/Microsoft.Intune.IntunePE.SqlAggregator/AppService_AppEnforcementStatus/%Y/%m/%d/%h/Data_%Y_%m_%d_%h.ss?date=({0})...({1})&hour=00...23&sparsestreamset=true", @startDate, @endDate);
+#DECLARE TenantIdDataSource string   = @"/my/Intune/TenantIdTenantNameAccountId.csv";
+
+source_ss = SSTREAM @sparsestreamset_ss;
+
+TenantAccountIDsSource = 
+    EXTRACT
+        TenantId   : string,
+        TenantName : string,
+        AccountId  : string
+FROM @TenantIdDataSource
+USING DefaultTextExtractor(delimiter: ',');
+
+
+outputTable = 
+    SELECT DISTINCT s.AccountId, t.TenantId, t.TenantName, UserId, DeviceId, MAX(LastComplianceMessageTime) AS LastComplianceMessageTimeMax, MAX(LastEnforcementMessageTime) AS LastEnforcementMessageTimeMax, ResultantAppState
+    FROM source_ss AS s
+    INNER JOIN TenantAccountIDsSource AS t ON s.AccountId == t.AccountId
+    WHERE ResultantAppState != "10";
+
+#DECLARE outputFile string = String.Format("/my/csp/Intune/rawEnforcementStatus.'{0}'-'{1}'.csv", @startDate, @endDate);
+
+OUTPUT outputTable
+TO  @outputFile
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
+
+
+

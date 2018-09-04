@@ -1,0 +1,408 @@
+﻿//Script GUID:f8051233-d4ac-471e-b8a3-fc38e540364b
+//Used for tracking history
+
+#DECLARE days             int    = Convert.ToInt32(@@AddDays@@);            // CSP Subscription streams
+#DECLARE daysTenantInfo   int    = Convert.ToInt32(@@AddDaysTenantInfo@@);  // Tenant Info streams
+#DECLARE daysSetup        int    = Convert.ToInt32(@@AddDaysSetup@@);       // Setup Start & Complete streams
+#DECLARE year             string = DateTime.Now.AddDays(@days).ToString("yyyy");
+#DECLARE month            string = DateTime.Now.AddDays(@days).ToString("MM");
+#DECLARE dropFolder       string = @"/shares/bus.prod/local/office/Aggregated/Datasets/Public/Office_FullSubscription/" + @year + "/" + @month + "/";
+#DECLARE streamName       string = @"Office_FullSubscription_" + DateTime.Now.AddDays(@days).ToString("yyyy_MM_dd") + ".ss";
+#DECLARE structuredStream string = @dropFolder + @streamName;
+
+source_ss   = SSTREAM @structuredStream;
+
+//
+// Setup Start & Complete script
+//
+REFERENCE "/shares/exchange.storage.prod/Resources/Binaries/Microsoft.Datacenter.Datamining.Cosmos.dll";
+USING Microsoft.Datacenter.Datamining.Cosmos;
+
+#DECLARE SkuName        string = "MICROSOFT 365 BUSINESS";   // case sensitive
+#DECLARE StartDateSetup string = "2017-08-02";               // GA date
+#DECLARE EndDateSetup   string = DateTime.Now.AddDays(@daysSetup).ToString("yyyy-MM-dd"); //"2017-11-27";
+
+#DECLARE SetupSS        string = string.Format(@"/shares/exchange.storage.prod/local/Aggregated/Datasets/Private/O365SetupNoDomain_Dly_Logins/O365SetupNoDomain_Dly_Logins_%Y_%m_%d.ss?date=({0})...({1})&sparsestreamset=true", @StartDateSetup, @EndDateSetup);
+
+FilteredSetupLogs = SSTREAM @SetupSS;
+
+SetupStart = SELECT DISTINCT TID AS OMSTenantId 
+             FROM FilteredSetupLogs;
+
+CompleteSetupTenants =
+    SELECT DISTINCT TID AS OMSTenantId
+    FROM FilteredSetupLogs
+    WHERE TagID == "414802" OR
+          TagID == "419780";
+
+// eg. https://cosmos14.osdinfra.net/cosmos/office.adhoc/shares/OBD.prod/local/Aggregated/Datasets/Public/Office_FullTenant/2017/11/Office_FullTenant_2017_11_05.ss
+#DECLARE view_path  string = @"/shares/bus.prod/local/office/Odin/Tenant/OfficeDataTenant.view";
+#DECLARE OStartDate string = DateTime.Now.Date.AddDays(@daysSetup).ToString("yyyy-MM-dd");
+
+OfficeTenant =
+    VIEW @view_path
+    PARAMS
+    (
+        StartSnapshotTime = @OStartDate,
+        EndSnapshotTime   = @OStartDate 
+    );
+
+O365TenantDatasetStream = SELECT DISTINCT
+           Id AS OMSTenantId,     
+           Name,
+           subscription.Offer.Name AS OfferName
+    FROM OfficeTenant
+    CROSS APPLY OfficeTenant.Subscriptions AS subscription;
+
+O365TenantDatasetSubs = SELECT OMSTenantId,
+                               Name,
+                               string.Join(";", LIST(DISTINCT OfferName).ToArray()) AS Subscriptions
+    FROM O365TenantDatasetStream
+    GROUP BY OMSTenantId, Name;
+
+//Join Complete Setup tenants with tenant Info. Use Inner join since we need subscription later for query.
+CompleteSetupTenantsInfo = SELECT CompleteSetupTenants.OMSTenantId,
+                                  O365TenantDatasetSubs.Name,
+                                  O365TenantDatasetSubs.Subscriptions
+                                  FROM CompleteSetupTenants
+                                       INNER JOIN O365TenantDatasetSubs
+                                       ON CompleteSetupTenants.OMSTenantId == O365TenantDatasetSubs.OMSTenantId;
+
+SetupTenantsWithSKU = SELECT OMSTenantId,
+                             Name,
+                             Subscriptions
+                             FROM CompleteSetupTenantsInfo
+    WHERE Subscriptions.ToUpper().Contains(@SkuName);
+
+#DECLARE CompleteSetupTenantsOutPutFilePath string = String.Format("/my/csp/CompleteSetupTenants.Aug02-{0}{1}.csv", DateTime.Now.AddDays(@daysSetup).ToString("MMM"), DateTime.Now.AddDays(@daysSetup).Day.ToString());
+
+OUTPUT SetupTenantsWithSKU
+TO     @CompleteSetupTenantsOutPutFilePath
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+//
+// Start Setup Tenants
+//
+
+//Join Start Setup tenants with tenant Info. Use Inner join since we need subscription later for query.
+StartSetupTenantsInfo = SELECT SetupStart.OMSTenantId,
+                                  O365TenantDatasetSubs.Name,
+                                  O365TenantDatasetSubs.Subscriptions
+                                  FROM SetupStart
+                                       INNER JOIN O365TenantDatasetSubs
+                                       ON SetupStart.OMSTenantId == O365TenantDatasetSubs.OMSTenantId;
+
+SetupTenantsWithSKU = SELECT OMSTenantId,
+                             Name,
+                             Subscriptions
+                             FROM StartSetupTenantsInfo
+    WHERE Subscriptions.ToUpper().Contains(@SkuName);
+
+#DECLARE StartSetupTenantsOutPutFilePath string = String.Format("/my/csp/StartSetupTenants.Aug02-{0}{1}.csv", DateTime.Now.AddDays(@daysSetup).ToString("MMM"), DateTime.Now.AddDays(@daysSetup).Day.ToString());
+
+OUTPUT SetupTenantsWithSKU
+TO     @StartSetupTenantsOutPutFilePath
+USING  CSVOutputter;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                                     //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//
+// The TenantIDs of Microsoft 365 Business customers.
+//
+m365TenantIDs = SELECT DISTINCT Subscription_OMSTenantId AS TenantId
+             FROM   source_ss
+             WHERE  Subscription_StateKey == 1   // 1: Active, 2: InGracePeriod, 3: Disabled, 4: Deprovisioned.
+             AND    
+             (
+                        Offer_Id IN ( "61795cab-2abd-43f6-88e9-c9adae5746e0",       // SPB: MICROSOFT 365 BUSINESS
+                                      "49445762-0dcc-4c5a-bdbf-154566033ec3")       // SPB: MICROSOFT 365 BUSINESS
+                        OR
+                        Offer_Id IN ("41d842ae-bf21-4b9c-a485-7f959206691f",     // MICROSOFT 365 BUSINESS PREVIEW TRIAL
+                                     "0678a59a-bf0f-4872-a7a6-87246890a432",     // MICROSOFT 365 BUSINESS PREVIEW
+                                     "41bc6d75-e7b9-4bd8-a91a-fdee2f5f8af5",     // MICROSOFT 365 BUSINESS PILOT
+                                     "6e9d29f5-ce1c-45e9-9fef-681f1eb42497")     // MICROSOFT 365 BUSINESS PREVIEW TRIAL
+             )
+
+             // The below are never wanted/needed..
+             AND    Subscription_OMSTenantId NOT IN ("46df7c21-7c54-45bf-821d-4e41e1a94890", // MSTEST_ORG1
+                                                     "40c9a141-2a4f-4e00-b24e-f9b6741bd37c", // PMG BCS TEST
+                                                     "0bc0573e-d5e3-4315-bcb0-b39ca6081883", // SUPER MARIO M365B ADVENTURES
+                                                     "1afbd921-8283-4e52-b7d1-3a127299b1d7") // MICROSOFT 365 BUSINESS BASKETBALL
+
+             AND    !Subscription_OrganizationUnitName.Contains("TEST_TEST_") // 260 overall, 178 ours on 2017/10/24
+    
+             AND    !Tenant_Name.Contains("TEST_TEST_")
+
+             AND    !Tenant_Name.StartsWith("CONTOSO") // 1481 rows on 2017/10/24
+             AND    !Subscription_OrganizationUnitName.Contains("1FD9315F-C24E-4357-9DE8-91E53B336541_GABE LONG - TEST RESELLER") // Gabe's Test Tenant
+             AND    !Tenant_Name.Contains("FABRIKAM");                                     // Gabe Long's test tenants
+
+
+             
+//
+// The TenantIDs of Microsoft 365 Business customers who also have an "Office 365 Business" subscription.
+//
+BusinessTenantIDsTable =
+    SELECT DISTINCT s.Subscription_OMSTenantId AS TenantId
+    FROM            source_ss AS s
+    JOIN            m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE           s.Offer_Name == "OFFICE 365 BUSINESS";
+
+#DECLARE outputFileNameB string = @"/my/csp/m365BusinessCspInfoV2-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".Business.TenantIds.csv";
+OUTPUT   BusinessTenantIDsTable
+TO       @outputFileNameB
+USING    DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+
+//
+// The TenantIDs of Microsoft 365 Business customers who also have an "Office 365 Business Essentials" subscription.
+//
+BusinessEssentialsTenantIDsTable =
+    SELECT DISTINCT s.Subscription_OMSTenantId AS TenantId
+    FROM            source_ss AS s
+    JOIN            m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE           s.Offer_Name == "OFFICE 365 BUSINESS ESSENTIALS";
+
+#DECLARE outputFileNameBE string = @"/my/csp/m365BusinessCspInfoV2-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".Business.Essentials.TenantIds.csv";
+OUTPUT   BusinessEssentialsTenantIDsTable
+TO       @outputFileNameBE
+USING    DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+
+//
+// The TenantIDs of Microsoft 365 Business customers who also have an "Office 365 Business Premium" subscription.
+//
+BusinessPremiumTenantIDsTable =
+    SELECT DISTINCT s.Subscription_OMSTenantId AS TenantId
+    FROM            source_ss AS s
+    JOIN            m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE           s.Offer_Name == "OFFICE 365 BUSINESS PREMIUM";
+
+#DECLARE outputFileNameBP string = @"/my/csp/m365BusinessCspInfoV2-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".Business.Premium.TenantIds.csv";
+OUTPUT   BusinessPremiumTenantIDsTable
+TO       @outputFileNameBP
+USING    DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+
+//
+// The TenantIDs of Microsoft 365 Business customers who also have an "Office 365 Enterprise E3" subscription.
+//
+EnterpriseE3TenantIDsTable =
+    SELECT DISTINCT s.Subscription_OMSTenantId AS TenantId
+    FROM            source_ss AS s
+    JOIN            m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE           s.Offer_Name == "OFFICE 365 ENTERPRISE E3";
+
+#DECLARE outputFileNameE3 string = @"/my/csp/m365BusinessCspInfoV2-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".Enterprise.E3.TenantIds.csv";
+OUTPUT   EnterpriseE3TenantIDsTable
+TO       @outputFileNameE3
+USING    DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+
+//
+// The TenantIDs of Microsoft 365 Business customers who also have an "Exchange Online Essentials" subscription.
+//
+ExchangeOnlineEssentialsTenantIDsTable =
+    SELECT DISTINCT s.Subscription_OMSTenantId AS TenantId
+    FROM            source_ss AS s
+    JOIN            m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE           s.Offer_Name == "EXCHANGE ONLINE ESSENTIALS";
+
+#DECLARE outputFileNameEOE string = @"/my/csp/m365BusinessCspInfoV2-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".Exchange.Online.Essentials.TenantIds.csv";
+OUTPUT   ExchangeOnlineEssentialsTenantIDsTable
+TO       @outputFileNameEOE
+USING    DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: false);
+
+//
+// Narrow the results to specific Offer IDs
+//
+search_result_for_Production =
+    SELECT 
+           s.Subscription_OrganizationUnitName AS OrgUnitName,
+           s.Subscription_OMSTenantId AS TenantID,
+           s.Offer_Id AS OfferID,
+           s.Subscription_Id AS ID,
+           s.Offer_Name AS OfferName,
+           s.Subscription_IncludedQuantity AS Quantity,
+           s.Subscription_StartDate AS StartDate,
+           s.Subscription_EndDate AS EndDate,
+           s.Tenant_Name AS TenantName,
+           s.Subscription_ChannelName AS ChannelType,
+           s.Subscription_StateKey AS State
+    FROM   source_ss AS s
+    //JOIN   m365TenantIDs AS t ON  s.Subscription_OMSTenantId == t.TenantId
+    WHERE  Offer_Id IN ( "61795cab-2abd-43f6-88e9-c9adae5746e0", "49445762-0dcc-4c5a-bdbf-154566033ec3") // SPB
+    AND    !String.IsNullOrWhiteSpace(s.Subscription_OrganizationUnitName)
+    AND    !String.IsNullOrWhiteSpace(s.Subscription_OMSTenantId)
+    AND    !s.Subscription_OrganizationUnitName.Contains("TEST_TEST_")              // Excluding Test Partners: 260 overall, 178 ours on 2017/10/24
+    AND    !s.Subscription_OrganizationUnitName.Contains("1FD9315F-C24E-4357-9DE8-91E53B336541_GABE LONG - TEST RESELLER") // Gabe's Test Tenant
+    AND    !s.Tenant_Name.Contains("FABRIKAM")                                      // Gabe Long's test tenants
+    AND    !s.Tenant_Name.Contains("TEST_TEST_")                                    // Excluding Test Tenants
+    AND    !s.Tenant_Name.StartsWith("CONTOSO")                                     // Excluding Contoso Test Tenants: 1481 rows on 2017/10/24
+    AND    Subscription_OMSTenantId NOT IN ("46df7c21-7c54-45bf-821d-4e41e1a94890", // MSTEST_ORG1 (Web Direct Test Tenant)
+                                            "40c9a141-2a4f-4e00-b24e-f9b6741bd37c", // PMG BCS TEST (Web Direct Test Tenant)
+                                            "0bc0573e-d5e3-4315-bcb0-b39ca6081883", // SUPER MARIO M365B ADVENTURES (Web Direct Test Tenant)
+                                            "1afbd921-8283-4e52-b7d1-3a127299b1d7") // MICROSOFT 365 BUSINESS BASKETBALL (Web Direct Test Tenant)
+    AND    s.Subscription_StateKey == 1;                                            // 1: Active, 2: InGracePeriod, 3: Disabled, 4: Deprovisioned.;     // 1: Active, 2: InGracePeriod, 3: Disabled, 4: Deprovisioned.
+    
+    //AND    s.Subscription_StartDate > new DateTime(year:2017, month:10, day:30);
+    
+#DECLARE outputFileNameProduction string = @"/my/csp/m365BusinessCspInfoV2Production-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".csv";
+
+OUTPUT search_result_for_Production
+TO     @outputFileNameProduction
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                          //
+// Convert TenantID as String into a TenantID as Guid in order to allow joining to Office_Fullscription structured streams. //
+//                                                                                                                          //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ProductionTenantIdsAsNullableGuids =
+    SELECT new Guid(TenantID) AS TenantIdGuid,
+           TenantID AS TenantId
+           FROM search_result_for_Production
+           WHERE !String.IsNullOrWhiteSpace(TenantID);
+
+#DECLARE StartDate string = DateTime.Now.AddDays(@daysTenantInfo).ToString("yyyy-MM-dd"); //  @"2017-11-26";   //  "2017-08-25"
+#DECLARE EndDate   string = DateTime.Now.AddDays(@daysTenantInfo).ToString("yyyy-MM-dd"); //  @"2017-11-26";
+
+#DECLARE TenantInfo string = string.Format("/shares/exchange.storage.prod/local/Aggregated/Datasets/Public/O365TenantDataset/ODINv2/TenantInfo/%Y/%m/TenantInfo_%Y_%m_%d.ss?date=({0})...({1})&sparsestreamset=true", @StartDate, @EndDate);
+TenantInfoStream = SSTREAM @TenantInfo;
+
+//
+// Query TenantInfo
+//
+TenantInfoTable =   
+    SELECT DISTINCT
+           t.SignupCountryCode AS TenantCountry, t.OmsTenantId AS OmsTenantId, t.CreatedDate AS TenantStartDate, t.TenantState AS TenantState,
+           t.TotalUsers AS TotalUsers, t.LicensedUsers AS LicensedUsers, 
+           IF(LicensedUsers > 1000,"G1000+",IF(LicensedUsers > 250,"F 251-1000",IF(LicensedUsers > 100,"E 101-250",IF(LicensedUsers > 50,"D 51-100",IF(LicensedUsers > 25,"C 26-50",IF(LicensedUsers > 10,"B 11-25",IF(LicensedUsers > 0,"A 1-10","0"))))))) AS SeatSize_LicensedUsers,
+           t.HasEducation AS HasEducation, t.HasExchange AS HasExchange, t.HasLync AS HasLync, t.HasSharepoint AS HasSharepoint,
+           t.HasYammer AS HasYammer, t.HasProject AS HasProject, t.HasPaid AS HasPaid, t.HasVisio AS HasVisio, t.IsOnlyInCP AS IsOnlyInCP, t.IsO365 AS IsO365
+           FROM TenantInfoStream AS t
+           INNER JOIN 
+               ProductionTenantIdsAsNullableGuids AS production
+           ON 
+               production.TenantIdGuid == t.OmsTenantId;
+//
+// JOIN the TenantInfo w/ CSP Subscription info
+// 
+CombinedResults =
+    SELECT DISTINCT prod.OrgUnitName, prod.TenantID, prod.OfferID, prod.ID AS SubscriptionID, prod.OfferName, prod.Quantity, prod.StartDate, prod.EndDate,
+           prod.TenantName, prod.ChannelType, prod.State, tir.TenantCountry, tir.OmsTenantId, tir.TenantStartDate, tir.TenantState,
+           tir.TotalUsers, tir.LicensedUsers, tir.SeatSize_LicensedUsers, tir.HasEducation, tir.HasExchange, tir.HasLync,
+           tir.HasSharepoint, tir.HasYammer, tir.HasProject, tir.HasPaid, tir.HasVisio, tir.IsOnlyInCP, tir.IsO365
+    FROM search_result_for_Production AS prod
+    INNER JOIN ProductionTenantIdsAsNullableGuids AS t
+    ON prod.TenantID == t.TenantId
+         LEFT OUTER JOIN TenantInfoTable AS tir
+         ON t.TenantIdGuid == tir.OmsTenantId;
+
+
+#DECLARE outputFileNameProductionCombinedResults string = String.Format("/my/csp/m365bSignUpAndTenantInfo-Production.'{0}'.csv", @StartDate);
+
+OUTPUT CombinedResults
+TO     @outputFileNameProductionCombinedResults
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                                     //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//
+// Narrow the results to specific Offer IDs
+//
+search_result_for_Preview =
+    SELECT 
+           s.Subscription_OrganizationUnitName AS OrgUnitName,
+           s.Subscription_OMSTenantId AS TenantID,
+           s.Offer_Id AS OfferID,
+           s.Subscription_Id AS ID,
+           s.Offer_Name AS OfferName,
+           s.Subscription_IncludedQuantity AS Quantity,
+           s.Subscription_StartDate AS StartDate,
+           s.Subscription_EndDate AS EndDate,
+           s.Tenant_Name AS TenantName,
+           s.Subscription_ChannelName AS ChannelType,
+           s.Subscription_StateKey AS State
+    FROM   source_ss AS s
+    WHERE  Offer_Id IN ("41d842ae-bf21-4b9c-a485-7f959206691f",                     // MICROSOFT 365 BUSINESS PREVIEW TRIAL
+                        "0678a59a-bf0f-4872-a7a6-87246890a432",                     // MICROSOFT 365 BUSINESS PREVIEW
+                        "41bc6d75-e7b9-4bd8-a91a-fdee2f5f8af5",                     // MICROSOFT 365 BUSINESS PILOT
+                        "6e9d29f5-ce1c-45e9-9fef-681f1eb42497")                     // MICROSOFT 365 BUSINESS PREVIEW TRIAL
+    AND    !String.IsNullOrWhiteSpace(s.Subscription_OrganizationUnitName)
+    AND    !String.IsNullOrWhiteSpace(s.Subscription_OMSTenantId)
+    AND    !s.Subscription_OrganizationUnitName.Contains("TEST_TEST_")              // Excluding Test Partners: 260 overall, 178 ours on 2017/10/24
+    AND    !s.Subscription_OrganizationUnitName.Contains("1FD9315F-C24E-4357-9DE8-91E53B336541_GABE LONG - TEST RESELLER") // Gabe's Test Tenant
+    AND    !s.Tenant_Name.Contains("FABRIKAM")                                      // Gabe Long's test tenants
+    AND    !s.Tenant_Name.Contains("TEST_TEST_")                                    // Excluding Test Tenants
+    AND    !s.Tenant_Name.StartsWith("CONTOSO")                                     // Excluding Contoso Test Tenants: 1481 rows on 2017/10/24
+    AND    Subscription_OMSTenantId NOT IN ("46df7c21-7c54-45bf-821d-4e41e1a94890", // MSTEST_ORG1 (Web Direct Test Tenant)
+                                            "40c9a141-2a4f-4e00-b24e-f9b6741bd37c", // PMG BCS TEST (Web Direct Test Tenant)
+                                            "0bc0573e-d5e3-4315-bcb0-b39ca6081883", // SUPER MARIO M365B ADVENTURES (Web Direct Test Tenant)
+                                            "1afbd921-8283-4e52-b7d1-3a127299b1d7") // MICROSOFT 365 BUSINESS BASKETBALL (Web Direct Test Tenant)
+    AND    s.Subscription_StateKey == 1;                                            // 1: Active, 2: InGracePeriod, 3: Disabled, 4: Deprovisioned.
+
+              
+    
+#DECLARE outputFileNamePreview string = @"/my/csp/m365BusinessCspInfoV2Preview-" + DateTime.Now.AddDays(@days).ToString("yyyy-MM-dd") + ".csv";
+
+OUTPUT search_result_for_Preview
+TO     @outputFileNamePreview
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                          //
+// Convert TenantID as String into a TenantID as Guid in order to allow joining to Office_Fullscription structured streams. //
+//                                                                                                                          //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+PreviewTenantIdsAsNullableGuids =
+    SELECT new Guid(TenantID) AS TenantIdGuid,
+           TenantID AS TenantId
+           FROM search_result_for_Preview
+           WHERE !String.IsNullOrWhiteSpace(TenantID);
+
+//
+// Query TenantInfo
+//
+TenantInfoTablePreview =   
+    SELECT DISTINCT
+           t.SignupCountryCode AS TenantCountry, t.OmsTenantId AS OmsTenantId, t.CreatedDate AS TenantStartDate, t.TenantState AS TenantState,
+           t.TotalUsers AS TotalUsers, t.LicensedUsers AS LicensedUsers, 
+           IF(LicensedUsers > 1000,"G1000+",IF(LicensedUsers > 250,"F 251-1000",IF(LicensedUsers > 100,"E 101-250",IF(LicensedUsers > 50,"D 51-100",IF(LicensedUsers > 25,"C 26-50",IF(LicensedUsers > 10,"B 11-25",IF(LicensedUsers > 0,"A 1-10","0"))))))) AS SeatSize_LicensedUsers,
+           t.HasEducation AS HasEducation, t.HasExchange AS HasExchange, t.HasLync AS HasLync, t.HasSharepoint AS HasSharepoint,
+           t.HasYammer AS HasYammer, t.HasProject AS HasProject, t.HasPaid AS HasPaid, t.HasVisio AS HasVisio, t.IsOnlyInCP AS IsOnlyInCP, t.IsO365 AS IsO365
+           FROM TenantInfoStream AS t
+           INNER JOIN 
+               PreviewTenantIdsAsNullableGuids AS preview
+           ON 
+               preview.TenantIdGuid == t.OmsTenantId;
+//
+// JOIN the TenantInfo w/ CSP Subscription info
+// 
+CombinedResultsPreview =
+    SELECT DISTINCT prev.OrgUnitName, prev.TenantID, prev.OfferID, prev.ID AS SubscriptionID, prev.OfferName, prev.Quantity, prev.StartDate, prev.EndDate,
+           prev.TenantName, prev.ChannelType, prev.State, tir.TenantCountry, tir.OmsTenantId, tir.TenantStartDate, tir.TenantState,
+           tir.TotalUsers, tir.LicensedUsers, tir.SeatSize_LicensedUsers, tir.HasEducation, tir.HasExchange, tir.HasLync,
+           tir.HasSharepoint, tir.HasYammer, tir.HasProject, tir.HasPaid, tir.HasVisio, tir.IsOnlyInCP, tir.IsO365
+    FROM search_result_for_Preview AS prev
+    INNER JOIN PreviewTenantIdsAsNullableGuids AS t
+    ON prev.TenantID == t.TenantId
+         LEFT OUTER JOIN TenantInfoTablePreview AS tir
+         ON t.TenantIdGuid == tir.OmsTenantId;
+
+
+#DECLARE outputFileNamePreviewCombinedResults string = String.Format("/my/csp/m365bSignUpAndTenantInfo-Preview.'{0}'.csv", @StartDate);
+
+OUTPUT CombinedResultsPreview
+TO     @outputFileNamePreviewCombinedResults
+USING  DefaultTextOutputter(delimiter: ',', encoding: System.Text.Encoding.UTF8, escape: false, dateTimeFormat: "d", outputHeader: true);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                                                                                                                     //
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
